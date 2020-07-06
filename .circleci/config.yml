@@ -59,12 +59,13 @@ jobs: ## Defining JOBS application
       - run: ls -lrt && pwd
       - run:
           command: |
+            cd app/reports
             sudo apt install wget
             pwd && ls -lrt
             wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
             chmod +x phpunit
             ./phpunit --version
-            ./phpunit --bootstrap app/reports/vendor/autoload.php tests
+            ./phpunit --bootstrap vendor/autoload.php tests
   deploy-production:
     docker:
       - image: circleci/python:3.7
