@@ -43,15 +43,15 @@ jobs: ## Defining JOBS application
 
   phpcs:
     steps:
-      run:
-        command: |
-          sudo apt install wget
-          pwd && ls -lrt
-          cd app/reports
-          wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
-          chmod +x phpunit
-          ./phpunit --version
-        run: ./phpunit --bootstrap vendor/autoload.php tests
+      - run:
+          command: |
+            sudo apt install wget
+            pwd && ls -lrt
+            cd app/reports
+            wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
+            chmod +x phpunit
+            ./phpunit --version
+      - run: ./phpunit --bootstrap vendor/autoload.php tests
 
 ## Defining WORKFLOW pipeline using jobs
 workflows:
