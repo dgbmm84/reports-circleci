@@ -10,13 +10,13 @@ jobs: ## Defining JOBS application
       # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
       # Specify the version you desire here
       - image: circleci/php:7.3
-    working_directory: ~/reports-circleci/app/reports
+    working_directory: ~/reports-circleci
     steps:
       - checkout
       - run: pwd && ls -lrt
       - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
       - run: sudo docker-php-ext-install zip
-      - run: ls -lrt /home/circleci/reports-circleci/app/reports
+      - run: cd app/reports && ls -lrt
       # Download and cache dependencies
       - restore_cache:
           keys:
