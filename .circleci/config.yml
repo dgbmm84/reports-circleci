@@ -6,8 +6,10 @@ version: 2
 jobs: ## Defining JOBS application
   build:
     docker:
+      # Each jobs needs an executor
+      # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
       # Specify the version you desire here
-      - image: circleci/php:7.3-node-browsers
+      - image: circleci/php:7.3
 
     steps:
       - checkout
@@ -32,6 +34,8 @@ jobs: ## Defining JOBS application
             - ./vendor
 
   sniffer:
+    docker:
+      - image: circleci/php:7.3
     steps:
       - run:
           command: |
@@ -42,6 +46,8 @@ jobs: ## Defining JOBS application
       - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
 
   phpcs:
+    docker:
+      - image: circleci/php:7.3
     steps:
       - run:
           command: |
