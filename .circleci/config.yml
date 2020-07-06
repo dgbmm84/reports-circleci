@@ -46,13 +46,8 @@ jobs: ## Defining JOBS application
             # Must be absolute path or relative path from working_directory
             at: .
       - run: ls -lrt && pwd
-      - run:
-          command: |
-            sudo pear install PHP_CodeSniffer
-            # - phpcs --extensions=php src/Framework/Controller # Path for checking entire project
-            pwd && ls -lrt
-            cd app/reports
-      - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
+      - run: sudo pear install PHP_CodeSniffer
+      - run: cd app/reports && phpcs -v --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
   phpcs:
     docker:
       - image: circleci/php:7.4
@@ -66,11 +61,10 @@ jobs: ## Defining JOBS application
           command: |
             sudo apt install wget
             pwd && ls -lrt
-            cd app/reports
             wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
             chmod +x phpunit
             ./phpunit --version
-      - run: ./phpunit --bootstrap vendor/autoload.php tests
+      - run: cd app/reports && ./phpunit --bootstrap vendor/autoload.php tests
   deploy-production:
     docker:
       - image: circleci/python:3.7
