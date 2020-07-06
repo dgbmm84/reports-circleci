@@ -62,7 +62,7 @@ jobs: ## Defining JOBS application
 
   deploy:
     docker:
-      - image: circleci/php:7.3
+      - image: circleci/python:3.7
     steps:
       - run: echo "deploying"
 
@@ -72,15 +72,15 @@ workflows:
   build:
     jobs:
       - build
-  tests:
-    jobs:
-      - sniffer
-      - phpcs
-  deploy:
-    jobs:
+      - tests:
+          jobs:
+            - sniffer
+            - phpcs
       - deploy:
-          filters:
-            branches:
-              only: master
-    requires:
-      - tests
+          jobs:
+            - deploy:
+                filters:
+                  branches:
+                    only: master
+          requires:
+            - tests
