@@ -3,11 +3,20 @@
 # Check https://circleci.com/docs/2.0/language-php/ for more details
 #
 version: 2
-jobs: ## Defining JOBS application
+jobs:
   build:
     docker:
       # Specify the version you desire here
-      - image: circleci/php:7.3-node-browsers
+      - image: circleci/php:7.1-node-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # Using the RAM variation mitigates I/O contention
+      # for database intensive operations.
+      # - image: circleci/mysql:5.7-ram
+      #
+      # - image: redis:2.8.19
 
     steps:
       - checkout
@@ -23,41 +32,27 @@ jobs: ## Defining JOBS application
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: cd app/reports
       - run: composer install -n --prefer-dist
 
       - save_cache:
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-  sniffer:
-    steps:
-      - run:
-          command: |
-            pear install PHP_CodeSniffer
-            # - phpcs --extensions=php src/Framework/Controller # Path for checking entire project
-            pwd && ls -lrt
-            cd app/reports
-      - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
-  phpcs:
-    steps:
-      run:
-        command: |
-          sudo apt install wget
-          pwd && ls -lrt
-          cd app/reports
-          wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
-          chmod +x phpunit
-          ./phpunit --version
-        run: ./phpunit --bootstrap vendor/autoload.php tests
+      - restore_cache:
+          keys:
+            - node-v1-{{ checksum "package.json" }}
+            - node-v1-
+      - run: yarn install
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}
+          paths:
+            - node_modules
 
-## Defining WORKFLOW pipeline using jobs
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build
-  tests:
-    jobs:
-      - sniffer
-      - phpcs
+      # prepare the database
+      - run: touch storage/testing.sqlite
+      - run: php artisan migrate --env=testing --database=sqlite_testing --force
+
+      # run tests with phpunit or codecept
+      #- run: ./vendor/bin/phpunit
+      - run: ./vendor/bin/codecept build
+      - run: ./vendor/bin/codecept run
