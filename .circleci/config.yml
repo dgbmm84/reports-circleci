@@ -33,7 +33,6 @@ jobs: ## Defining JOBS application
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-
   sniffer:
     docker:
       - image: circleci/php:7.3
@@ -46,7 +45,6 @@ jobs: ## Defining JOBS application
             pwd && ls -lrt
             cd app/reports
       - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
-
   phpcs:
     docker:
       - image: circleci/php:7.3
@@ -61,14 +59,12 @@ jobs: ## Defining JOBS application
             chmod +x phpunit
             ./phpunit --version
       - run: ./phpunit --bootstrap vendor/autoload.php tests
-
   deploy-production:
     docker:
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
       - run: echo "deploying PRODUCTION"
-
   deploy-develop:
     docker:
       - image: circleci/python:3.7
