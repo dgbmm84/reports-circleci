@@ -72,11 +72,13 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - tests:
+      -
+        tests:
           jobs:
             - sniffer
             - phpcs
-      - deploy:
+      -
+        deploy:
           filters:
             branches:
               only: master
