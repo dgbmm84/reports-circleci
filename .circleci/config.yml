@@ -10,7 +10,7 @@ jobs: ## Defining JOBS application
       # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
       # Specify the version you desire here
       - image: circleci/php:7.3
-    working_directory: ./app/reports
+    working_directory: ~/reports-circleci
     steps:
       - checkout
       - run: pwd && ls -lrt
@@ -37,6 +37,7 @@ jobs: ## Defining JOBS application
   sniffer:
     docker:
       - image: circleci/php:7.3
+    working_directory: ~/reports-circleci
     steps:
       - run:
           command: |
@@ -49,6 +50,7 @@ jobs: ## Defining JOBS application
   phpcs:
     docker:
       - image: circleci/php:7.3
+    working_directory: ~/reports-circleci
     steps:
       - run:
           command: |
@@ -60,28 +62,37 @@ jobs: ## Defining JOBS application
             ./phpunit --version
       - run: ./phpunit --bootstrap vendor/autoload.php tests
 
-  deploy:
+  deploy-production:
     docker:
       - image: circleci/python:3.7
+    working_directory: ~/reports-circleci
     steps:
-      - run: echo "deploying"
+      - run: echo "deploying PRODUCTION"
+
+  deploy-develop:
+    docker:
+      - image: circleci/python:3.7
+    working_directory: ~/reports-circleci
+    steps:
+      - run: echo "deploying DEVELOP"
 
 ## Defining WORKFLOW pipeline using jobs
 workflows:
   version: 2
-  build:
-    build_test_deploy:
-      jobs:
-        - build
-
-        - tests:
-            jobs:
-              - sniffer
-              - phpcs
-
-        - deploy:
-            filters:
-              branches:
-                only: master
-            requires:
-              - tests
+  build-deploy:
+    jobs:
+      - build
+      - deploy-develop:
+          requires:
+            - sniffer
+            - phpcs
+          filters:
+            branches:
+              only: develop
+      - deploy-production:
+          requires:
+            - sniffer
+            - phpcs
+          filters:
+            branches:
+              only: master
