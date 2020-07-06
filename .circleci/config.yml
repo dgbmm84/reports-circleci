@@ -10,12 +10,13 @@ jobs: ## Defining JOBS application
       # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
       # Specify the version you desire here
       - image: circleci/php:7.3
-
+    working_directory: ./app/reports
     steps:
       - checkout
-
+      - run: pwd && ls -lrt
       - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
       - run: sudo docker-php-ext-install zip
+      - run: cd app/reports
 
       # Download and cache dependencies
       - restore_cache:
@@ -25,7 +26,7 @@ jobs: ## Defining JOBS application
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: cd app/reports
+
       - run: composer install -n --prefer-dist
 
       - save_cache:
@@ -59,6 +60,12 @@ jobs: ## Defining JOBS application
             ./phpunit --version
       - run: ./phpunit --bootstrap vendor/autoload.php tests
 
+  deploy:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - run: echo "deploying"
+
 ## Defining WORKFLOW pipeline using jobs
 workflows:
   version: 2
@@ -69,3 +76,11 @@ workflows:
     jobs:
       - sniffer
       - phpcs
+  deploy:
+    jobs:
+      - deploy
+    requires:
+      - tests
+    filters:
+      branches:
+        only: master
