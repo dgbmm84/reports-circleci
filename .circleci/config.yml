@@ -78,9 +78,9 @@ workflows:
       - phpcs
   deploy:
     jobs:
-      - deploy
+      - deploy:
+          filters:
+            branches:
+              only: master
     requires:
       - tests
-    filters:
-      branches:
-        only: master
