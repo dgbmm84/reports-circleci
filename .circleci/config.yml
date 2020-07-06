@@ -10,7 +10,7 @@ jobs: ## Defining JOBS application
       # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
       # Specify the version you desire here
       - image: circleci/php:7.3
-    working_directory: ~/reports-circleci
+    working_directory: ~/reports-circleci/app/reports
     steps:
       - checkout
       - run: pwd && ls -lrt
@@ -75,10 +75,10 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - sniffer:
+      - sniffer:  # Job Parallel because depends of build
           requires:
-            -  build
-      - phpcs:
+            - build
+      - phpcs:    # Job Parallel because depends of build
           requires:
             - build
       - deploy-develop:
