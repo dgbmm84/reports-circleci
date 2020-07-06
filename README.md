@@ -3,7 +3,10 @@ Despliegue usando CircleCI Contra un Repositorio GitHub usando un docker-compose
 ---
 
 Configuration CircleCI
-
+    
+    - El archivo de configuración está dentro del directorio .circleci/config.yml
+    -
+    
  
 Host de despliegue 
 

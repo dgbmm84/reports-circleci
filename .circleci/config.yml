@@ -1,0 +1,63 @@
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs: ## Defining JOBS application
+  build:
+    docker:
+      # Specify the version you desire here
+      - image: circleci/php:7.3-node-browsers
+
+    steps:
+      - checkout
+
+      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
+      - run: sudo docker-php-ext-install zip
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: cd app/reports
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+  Sniffer:
+    steps:
+      - run:
+          command: |
+            pear install PHP_CodeSniffer
+            # - phpcs --extensions=php src/Framework/Controller # Path for checking entire project
+            pwd && ls -lrt
+            cd app/reports
+      - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
+  PhpCS:
+    steps:
+      run:
+        command: |
+          sudo apt install wget
+          pwd && ls -lrt
+          cd app/reports
+          wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
+          chmod +x phpunit
+          ./phpunit --version
+        run: ./phpunit --bootstrap vendor/autoload.php tests
+
+## Defining WORKFLOW pipeline
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+  tests:
+    jobs:
+      - Sniffer
+      - PhpCS
