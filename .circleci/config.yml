@@ -37,6 +37,7 @@ jobs: ## Defining JOBS application
           # Must be relative path from root
           paths:
             - app/reports           # ----------- Caching spscific directory on Object
+
   sniffer:
     docker:
       - image: circleci/php:7.4
@@ -48,6 +49,7 @@ jobs: ## Defining JOBS application
       - run: ls -lrt && pwd  # ---------------------- Each command on step is independent from each others
       - run: sudo pear install PHP_CodeSniffer
       - run: cd app/reports && phpcs -v --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
+
   phpcs:
     docker:
       - image: circleci/php:7.4
@@ -66,17 +68,25 @@ jobs: ## Defining JOBS application
             chmod +x phpunit
             ./phpunit --version
             ./phpunit --bootstrap vendor/autoload.php tests
+
   deploy-production:
     docker:
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
+      - attach_workspace:
+          at: .
       - run: echo "deploying PRODUCTION"
+      - run: pip3 install Fabric3==1.13.1.post1 && fab --version
+      # - run: fab production deploy:env_file="$ENV_FILE_PROD",mysql_env_file="$ENV_MYSQL_FILE"
+
   deploy-develop:
     docker:
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
+      - attach_workspace:
+          at: .
       - run: echo "deploying DEVELOP"
 
 ## Defining WORKFLOW pipeline using jobs

@@ -5,8 +5,10 @@ Despliegue usando CircleCI Contra un Repositorio GitHub usando un docker-compose
 Configuration CircleCI
     
     - El archivo de configuración está dentro del directorio .circleci/config.yml
-    -
-    
+    - Configuración de las variables de entorno:
+        > Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > EnvironmentVariables
+    - Configuración SSH:
+        > 
  
 Host de despliegue 
 
@@ -28,7 +30,7 @@ Despliegue
     - Git push origin master 
     - Arranca los servicios de docker en la máquina destino
         - docker exec -it app_prod bash
-        - Las variables de la aplicación están declaradas en el apartado // TODO y se injectan automáticatimante.  
+        - Las variables de la aplicación están declaradas en el apartado "Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > EnvironmentVariables" y se injectan automáticatimante.  
             - Fabric usa para task arguments un tratamiento especial en los caracteres que hay que aplicar a las variables de entorno 
 
 Comandos
