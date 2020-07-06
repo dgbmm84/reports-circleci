@@ -40,11 +40,11 @@ jobs: ## Defining JOBS application
   sniffer:
     docker:
       - image: circleci/php:7.4
-    working_directory: ~/reports-circleci/app/reports
+    working_directory: ~/reports-circleci
     steps:
       - attach_workspace:
             # Must be absolute path or relative path from working_directory
-            at: ~/reports-circleci/app/reports
+            at: .
       - run: ls -lrt && pwd
       - run:
           command: |
@@ -56,11 +56,11 @@ jobs: ## Defining JOBS application
   phpcs:
     docker:
       - image: circleci/php:7.4
-    working_directory: ~/reports-circleci/app/reports
+    working_directory: ~/reports-circleci
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ~/reports-circleci/app/reports
+          at: .
       - run: ls -lrt && pwd
       - run:
           command: |
