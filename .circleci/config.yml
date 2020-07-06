@@ -64,7 +64,7 @@ jobs: ## Defining JOBS application
             wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
             chmod +x phpunit
             ./phpunit --version
-            cd app/reports && ./phpunit --bootstrap vendor/autoload.php tests
+            ./phpunit --bootstrap app/reports/vendor/autoload.php tests
   deploy-production:
     docker:
       - image: circleci/python:3.7
