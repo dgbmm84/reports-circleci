@@ -33,19 +33,19 @@ jobs: ## Defining JOBS application
           # into the workspace for use in downstream job. Must be an absolute path,
           # or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: ~/reports-circleci
+          root: ~/reports-circleci  # ----------- Caching directory root for using on other jobs without checkout again
           # Must be relative path from root
           paths:
-            - app/reports
+            - app/reports           # ----------- Caching spscific directory on Object
   sniffer:
     docker:
       - image: circleci/php:7.4
     working_directory: ~/reports-circleci
     steps:
-      - attach_workspace:
+      - attach_workspace: # Getting The workspace persisted in Build Job at . (Because we are on working_directory already)
             # Must be absolute path or relative path from working_directory
             at: .
-      - run: ls -lrt && pwd
+      - run: ls -lrt && pwd  # ---------------------- Each command on step is independent from each others
       - run: sudo pear install PHP_CodeSniffer
       - run: cd app/reports && phpcs -v --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
   phpcs:
@@ -64,7 +64,7 @@ jobs: ## Defining JOBS application
             wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
             chmod +x phpunit
             ./phpunit --version
-      - run: cd app/reports && ./phpunit --bootstrap vendor/autoload.php tests
+            cd app/reports && ./phpunit --bootstrap vendor/autoload.php tests
   deploy-production:
     docker:
       - image: circleci/python:3.7
