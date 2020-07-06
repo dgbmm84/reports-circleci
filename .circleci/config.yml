@@ -30,6 +30,7 @@ jobs: ## Defining JOBS application
           key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
+
   sniffer:
     steps:
       - run:
@@ -39,6 +40,7 @@ jobs: ## Defining JOBS application
             pwd && ls -lrt
             cd app/reports
       - run: phpcs --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
+
   phpcs:
     steps:
       run:
