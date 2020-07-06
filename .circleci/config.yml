@@ -44,7 +44,8 @@ jobs: ## Defining JOBS application
     steps:
       - attach_workspace:
             # Must be absolute path or relative path from working_directory
-            at: .
+            at: ~/reports-circleci/app/reports
+      - run: ls -lrt && pwd
       - run:
           command: |
             sudo pear install PHP_CodeSniffer
@@ -59,7 +60,8 @@ jobs: ## Defining JOBS application
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: .
+          at: ~/reports-circleci/app/reports
+      - run: ls -lrt && pwd
       - run:
           command: |
             sudo apt install wget
