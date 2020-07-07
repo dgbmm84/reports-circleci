@@ -79,7 +79,10 @@ jobs: ## Defining JOBS application
       - run: echo "deploying PRODUCTION"
       - run: echo $ENV_FILE_PROD
       - run: pip3 install Fabric3==1.13.1.post1 && fab --version
-      # - run: fab production deploy:env_file="$ENV_FILE_PROD",mysql_env_file="$ENV_MYSQL_FILE"
+      - add_ssh_keys:  # added firgerprint ssh key added on project
+          fingerprints:
+            - "86:a7:13:98:15:66:2c:fc:71:be:ce:c7:2a:8a:e9:df"
+      - run: fab production deploy:env_file="$ENV_FILE_PROD",mysql_env_file="$ENV_MYSQL_FILE"
 
   deploy-develop:
     docker:
