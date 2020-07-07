@@ -74,8 +74,10 @@ jobs: ## Defining JOBS application
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
-      - attach_workspace:
-          at: .
+      #- attach_workspace:
+      #    at: .
+      - checkout
+      - run: ls -lrt && pwd
       - run: echo "deploying PRODUCTION"
       # - run: echo $ENV_FILE_PROD
       - run: pip3 install Fabric3==1.13.1.post1 && fab --version
