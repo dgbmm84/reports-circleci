@@ -14,6 +14,7 @@ Configuration CircleCI
             > Creamos una llave con la privada y lo añadimos al proyecto de CircleCI
             > Añadimos al repositorio del que bebe CircleCI (GitHub) la nueva ssh key public al apartado de Settings para poder hacer git push de los cambios del proyecto
         > Como estamos usando ngrok ya teníamos añadida la SSH con formato OPENSSH , debemos añadir la nueva RSA ahora tambien para que permita la conexión 
+        > Por ultimo, al crear una nueva ssh rsa hemos de añadirlo al authorized_keys la id_rsa.pub del host destino.
         
 Host de despliegue 
 

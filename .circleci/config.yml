@@ -4,70 +4,70 @@
 #
 version: 2
 jobs: ## Defining JOBS application
-  #build:
-  #  docker:
-  #    # Each jobs needs an executor
-  #    # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
-  #    # Specify the version you desire here
-  #    - image: circleci/php:7.4
-  #  working_directory: ~/reports-circleci/app/reports
-  #  steps:
-  #    - checkout:
-  #        path: ~/reports-circleci
-  #    - run: pwd && ls -lrt
-  #    - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-  #    - run: sudo docker-php-ext-install zip
-  #    # Download and cache dependencies
-  #    - restore_cache:
-  #        keys:
-  #          # "composer.lock" can be used if it is committed to the repo
-  #          - v1-dependencies-{{ checksum "composer.json" }}
-  #          # fallback to using the latest cache if no exact match is found
-  #          - v1-dependencies-
-  #    - run: composer install -n --prefer-dist
-  #    - save_cache:
-  #        key: v1-dependencies-{{ checksum "composer.json" }}
-  #        paths:
-  #          - ./vendor
-  #    - persist_to_workspace: # Persist the specified paths (workspace/echo-output)
-  #        # into the workspace for use in downstream job. Must be an absolute path,
-  #        # or relative path from working_directory. This is a directory on the container which is
-  #        # taken to be the root directory of the workspace.
-  #        root: ~/reports-circleci  # ----------- Caching directory root for using on other jobs without checkout again
-  #        # Must be relative path from root
-  #        paths:
-  #          - app/reports           # ----------- Caching specific directory on Object
+  build:
+    docker:
+      # Each jobs needs an executor
+      # The job has no executor type specified. The job should have one of the following keys specified: "macos", "machine", "docker"
+      # Specify the version you desire here
+      - image: circleci/php:7.4
+    working_directory: ~/reports-circleci/app/reports
+    steps:
+      - checkout:
+          path: ~/reports-circleci
+      - run: pwd && ls -lrt
+      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
+      - run: sudo docker-php-ext-install zip
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # "composer.lock" can be used if it is committed to the repo
+            - v1-dependencies-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.json" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace: # Persist the specified paths (workspace/echo-output)
+          # into the workspace for use in downstream job. Must be an absolute path,
+          # or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: ~/reports-circleci  # ----------- Caching directory root for using on other jobs without checkout again
+          # Must be relative path from root
+          paths:
+            - app/reports           # ----------- Caching specific directory on Object
 
-  #sniffer:
-  #  docker:
-  #    - image: circleci/php:7.4
-  #  working_directory: ~/reports-circleci
-  #  steps:
-  #    - attach_workspace: # Getting The workspace persisted in Build Job at . (Because we are on working_directory already)
-  #          # Must be absolute path or relative path from working_directory
-  #          at: .
-  #    - run: ls -lrt && pwd  # ---------------------- Each command on step is independent from each others
-  #    - run: sudo pear install PHP_CodeSniffer
-  #    - run: cd app/reports && phpcs -v --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
+  sniffer:
+    docker:
+      - image: circleci/php:7.4
+    working_directory: ~/reports-circleci
+    steps:
+      - attach_workspace: # Getting The workspace persisted in Build Job at . (Because we are on working_directory already)
+            # Must be absolute path or relative path from working_directory
+            at: .
+      - run: ls -lrt && pwd  # ---------------------- Each command on step is independent from each others
+      - run: sudo pear install PHP_CodeSniffer
+      - run: cd app/reports && phpcs -v --extensions=php --standard=PSR2 src/Framework/Controller/ClassPhpCS.php
 
-  #phpcs:
-  #  docker:
-  #    - image: circleci/php:7.4
-  #  working_directory: ~/reports-circleci
-  #  steps:
-  #    - attach_workspace:
-  #        # Must be absolute path or relative path from working_directory
-  #        at: .
-  #    - run: ls -lrt && pwd
-  #    - run:
-  #        command: |
-  #          cd app/reports
-  #          sudo apt install wget
-  #          pwd && ls -lrt
-  #          wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
-  #          chmod +x phpunit
-  #          ./phpunit --version
-  #          ./phpunit --bootstrap vendor/autoload.php tests
+  phpcs:
+    docker:
+      - image: circleci/php:7.4
+    working_directory: ~/reports-circleci
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - run: ls -lrt && pwd
+      - run:
+          command: |
+            cd app/reports
+            sudo apt install wget
+            pwd && ls -lrt
+            wget -O phpunit https://phar.phpunit.de/phpunit-9.phar
+            chmod +x phpunit
+            ./phpunit --version
+            ./phpunit --bootstrap vendor/autoload.php tests
 
   deploy-production:
     docker:
@@ -86,9 +86,12 @@ jobs: ## Defining JOBS application
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
-      - attach_workspace:
-          at: .
-      - run: echo "deploying DEVELOP"
+      - checkout
+      - run: pip3 install Fabric3==1.13.1.post1 && fab --version
+      - add_ssh_keys:  # added fingerprint ssh key added on project
+          fingerprints:
+            - "8f:8d:b7:00:79:cb:10:2c:d3:82:49:0d:d8:de:5a:64"
+      - run: fab stage deploy:env_file="$ENV_FILE_PROD",mysql_env_file="$ENV_MYSQL_FILE"
 
 ## Defining WORKFLOW pipeline using jobs
 workflows:
