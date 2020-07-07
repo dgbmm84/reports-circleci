@@ -11,7 +11,8 @@ Configuration CircleCI
         > Since CircleCI cannot decrypt SSH keys, every new key must have an empty passphrase. CircleCI also will not accept OpenSSH’s default file format - use ssh-keygen -m pem if you are using OpenSSH to generate your key.
         > Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > SSH Keys
         > Guardamos las id_rsa openssh que teníamos de otros proyectos y generamos una nueva RSA para este proyecto
-            > Creamos una llave con la privada y como hostname el proporcionado por ngrok sin puerto
+            > Creamos una llave con la privada y como hostname el proporcionado por ngrok sin puerto y lo añadimos al proyecto de CircleCI
+            > Añadimos al repositorio del que bebe CircleCI (GitHub) la nueva ssh key public al apartado de Settings para poder hacer git push de los cambios del proyecto
  
 Host de despliegue 
 
