@@ -77,7 +77,7 @@ jobs: ## Defining JOBS application
       - attach_workspace:
           at: .
       - run: echo "deploying PRODUCTION"
-      - run: echo $ENV_FILE_PROD
+      # - run: echo $ENV_FILE_PROD
       - run: pip3 install Fabric3==1.13.1.post1 && fab --version
       - add_ssh_keys:  # added firgerprint ssh key added on project
           fingerprints:
