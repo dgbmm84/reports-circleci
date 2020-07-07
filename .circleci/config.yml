@@ -36,7 +36,7 @@ jobs: ## Defining JOBS application
   #        root: ~/reports-circleci  # ----------- Caching directory root for using on other jobs without checkout again
   #        # Must be relative path from root
   #        paths:
-  #          - app/reports           # ----------- Caching spscific directory on Object
+  #          - app/reports           # ----------- Caching specific directory on Object
 
   #sniffer:
   #  docker:
@@ -74,7 +74,8 @@ jobs: ## Defining JOBS application
       - image: circleci/python:3.7
     working_directory: ~/reports-circleci
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run: echo "deploying PRODUCTION"
       # - run: echo $ENV_FILE_PROD
       - run: pip3 install Fabric3==1.13.1.post1 && fab --version
@@ -97,24 +98,24 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build
-      - sniffer:  # Job Parallel because depends of build
-          requires:
-            - build
-      - phpcs:    # Job Parallel because depends of build
-          requires:
-            - build
-      - deploy-develop:
-          requires:
-            - sniffer
-            - phpcs
-          filters:
-            branches:
-              only: develop
+      #- build
+      #- sniffer:  # Job Parallel because depends of build
+      #    requires:
+      #      - build
+      #- phpcs:    # Job Parallel because depends of build
+      #    requires:
+      #      - build
+      #- deploy-develop:
+      #    requires:
+      #      - sniffer
+      #      - phpcs
+      #    filters:
+      #      branches:
+      #        only: develop
       - deploy-production:
-          requires:
-            - sniffer
-            - phpcs
+          #    requires:
+          #  - sniffer
+          #  - phpcs
           filters:
             branches:
               only: master
