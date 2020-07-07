@@ -9,10 +9,11 @@ Configuration CircleCI
         > Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > EnvironmentVariables
     - Configuración SSH:
         > Since CircleCI cannot decrypt SSH keys, every new key must have an empty passphrase. CircleCI also will not accept OpenSSH’s default file format - use ssh-keygen -m pem if you are using OpenSSH to generate your key.
-        > Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > SSH Keys
+        > Pipelines (dentro del proyecto - Arriba - Dcha) > Project Settings > SSH Keys > Additional SSH Keys
         > Guardamos las id_rsa openssh que teníamos de otros proyectos y generamos una nueva RSA para este proyecto
             > Creamos una llave con la privada y lo añadimos al proyecto de CircleCI
-            > Añadimos al repositorio del que bebe CircleCI (GitHub) la nueva ssh key public al apartado de Settings para poder hacer git push de los cambios del proyecto
+                Esto nos da un firgerprint que usaremos en nuestra plantilla
+        > Añadimos al repositorio del que bebe CircleCI (GitHub) la nueva ssh key public al apartado de Settings para poder hacer git push de los cambios del proyecto
         > Como estamos usando ngrok ya teníamos añadida la SSH con formato OPENSSH , debemos añadir la nueva RSA ahora tambien para que permita la conexión 
         > Por ultimo, al crear una nueva ssh rsa hemos de añadirlo al authorized_keys la id_rsa.pub del host destino.
         
